@@ -6,6 +6,7 @@
     string jsonStringContent = Model;
 
 
+
 }
 <head>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -14,33 +15,43 @@
 
 <div class="container text-center">
     <h2 class="mb-5">Guess That Quote! - Breaking Bad Edition</h2>
-    <p id="json" hidden>@Model</p>
-    <p id="round" class="mb-5"></p>
+    <p id="round"></p>
+    <p id="score" class="mb-5"></p>
     <h5 id="quote" class="mb-4"></h5>
     <p id="author" class="mb-4"></p>
 
     <div class="container">
         <div class="row">
             <div class="col">
-                <button id="optionA" type="button" class="btn btn-primary btn-lg">A</button>
+                <button id="option1" type="button" class="btn btn-primary btn-lg">A</button>
             </div>
             <div class="col">
-                <button id="optionB" type="button" class="btn btn-primary btn-lg">B</button>
+                <button id="option2" type="button" class="btn btn-primary btn-lg">B</button>
             </div>
             <div class="w-100"></div>
             <div class="col">
-                <button id="optionC" type="button" class="btn btn-primary btn-lg">C</button>
+                <button id="option3" type="button" class="btn btn-primary btn-lg">C</button>
             </div>
             <div class="col">
-                <button id="optionD" type="button" class="btn btn-primary btn-lg">D</button>
+                <button id="option4" type="button" class="btn btn-primary btn-lg">D</button>
             </div>
         </div>
     </div>
 
     <script type="text/javascript">
+        var score = 0;
         var maxRound = 10;
         var currentRound = 0;
         var jsonObject = @Html.Raw(jsonStringContent);
+
+        var authors = [];
+        for (let i = 0; i < maxRound; i++) {
+            var string = jsonObject[i].author;
+            if (!authors.includes(string)) {
+                authors.push(string);
+            }
+        }
+        console.log(authors);
 
         var quote = jsonObject[currentRound].quote;
         var author = jsonObject[currentRound].author;
@@ -52,21 +63,39 @@
         }
 
 
-        $("#optionA").on("click", function () {
-            if (currentRound <= maxRound) {
-                currentRound++;
-                nextRound();
-            }
 
-        });
 
         function updateDisplay() {
             $('#quote').html(quote);
             $('#author').html(author);
 
-            $('#optionA').html("A - " + author);
+            var selectedNumbers = [];
+            selectedNumbers.push(authors.indexOf(author));
+            console.log("index: "+authors.indexOf(author));
+            while (selectedNumbers.length < 4) {
+                var randomNumber = Math.floor(Math.random() * authors.length);
+                if (!selectedNumbers.includes(randomNumber)) {
+                    selectedNumbers.push(randomNumber);
+                }
+            }
+            
+
+            var randomNumberList = [];
+            let i = 1;
+            while (randomNumberList.length < 4) {
+                var randomNumber = Math.floor(Math.random() * 4);
+                if (!randomNumberList.includes(randomNumber)) {
+                    randomNumberList.push(randomNumber);
+
+                    $("#option"+i).html("" + authors[selectedNumbers[randomNumber]]);
+                    i++;
+                }
+
+            }
+
 
             $('#round').html("Round " + (currentRound + 1) + "/" + maxRound);
+            $('#score').html("Score " + score);
         }
 
         function nextRound() {
@@ -75,9 +104,30 @@
 
         }
 
+
         $(document).ready(function () {
             updateDisplay();
+
+            for (let i = 1; i <= 4; i++) {
+                $("#option"+i).on("click", function () {
+                    var answer = $(this).html();
+                    
+                    if (answer == author) {
+                        score++;
+                    } else {
+
+                    }
+
+                    if (currentRound <= maxRound) {
+                        currentRound++;
+                        nextRound();
+                    }
+                });
+            }
+
         });
+
+
 
     </script>
 </div>
