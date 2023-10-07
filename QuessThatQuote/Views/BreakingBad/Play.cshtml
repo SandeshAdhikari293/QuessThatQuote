@@ -1,0 +1,85 @@
+﻿@model string;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    string jsonStringContent = Model;
+
+
+}
+<head>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</head>
+
+
+<div class="container text-center">
+    <h2 class="mb-5">Guess That Quote! - Breaking Bad Edition</h2>
+    <p id="json" hidden>@Model</p>
+    <p id="round" class="mb-5"></p>
+    <h5 id="quote" class="mb-4"></h5>
+    <p id="author" class="mb-4"></p>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <button id="optionA" type="button" class="btn btn-primary btn-lg">A</button>
+            </div>
+            <div class="col">
+                <button id="optionB" type="button" class="btn btn-primary btn-lg">B</button>
+            </div>
+            <div class="w-100"></div>
+            <div class="col">
+                <button id="optionC" type="button" class="btn btn-primary btn-lg">C</button>
+            </div>
+            <div class="col">
+                <button id="optionD" type="button" class="btn btn-primary btn-lg">D</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var maxRound = 10;
+        var currentRound = 0;
+        var jsonObject = @Html.Raw(jsonStringContent);
+
+        var quote = jsonObject[currentRound].quote;
+        var author = jsonObject[currentRound].author;
+
+
+        function updateQuote() {
+            quote = jsonObject[currentRound].quote;
+            author = jsonObject[currentRound].author;
+        }
+
+
+        $("#optionA").on("click", function () {
+            if (currentRound <= maxRound) {
+                currentRound++;
+                nextRound();
+            }
+
+        });
+
+        function updateDisplay() {
+            $('#quote').html(quote);
+            $('#author').html(author);
+
+            $('#optionA').html("A - " + author);
+
+            $('#round').html("Round " + (currentRound + 1) + "/" + maxRound);
+        }
+
+        function nextRound() {
+            updateQuote();
+            updateDisplay();
+
+        }
+
+        $(document).ready(function () {
+            updateDisplay();
+        });
+
+    </script>
+</div>
+
+
