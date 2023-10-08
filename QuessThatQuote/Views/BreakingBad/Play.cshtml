@@ -1,24 +1,27 @@
-﻿@model string;
+﻿@model QuoteViewModel;
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    string jsonStringContent = Model;
-
-
-
+    string jsonStringContent = Model.Json;
 }
 <head>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
 
-
 <div class="container text-center">
     <h2 class="mb-5">Guess That Quote! - Breaking Bad Edition</h2>
+    <div id="countdown">
+        <div id="countdown-number"></div>
+        <svg>
+            <circle r="18" cx="20" cy="20"></circle>
+        </svg>
+    </div>
     <p id="round"></p>
     <p id="score" class="mb-5"></p>
     <h5 id="quote" class="mb-4"></h5>
     <p id="author" class="mb-4"></p>
+
 
     <div class="container">
         <div class="row">
@@ -38,9 +41,28 @@
         </div>
     </div>
 
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     <script type="text/javascript">
+        var gameOver = false;
+        var countdownNumberEl = document.getElementById('countdown-number');
+        var countdown = 10;
+
+        countdownNumberEl.textContent = countdown;
+
+        setInterval(function () {
+            if (gameOver) {
+                return;
+            }
+            countdown--;
+            if (countdown == 0) {
+                end();
+            }
+
+            countdownNumberEl.textContent = countdown;
+        }, 1000);
+
         var score = 0;
-        var maxRound = 10;
+        var maxRound = 100;
         var currentRound = 0;
         var jsonObject = @Html.Raw(jsonStringContent);
 
@@ -62,16 +84,26 @@
             author = jsonObject[currentRound].author;
         }
 
+        var startIndexTyped = 0;
+        var speed = 50;
+        function typeWriter() {
 
-
+            if (startIndexTyped < quote.length) {
+                document.getElementById("quote").innerHTML += quote.charAt(startIndexTyped);
+                startIndexTyped++;
+                setTimeout(typeWriter, speed);
+            }
+        }
 
         function updateDisplay() {
-            $('#quote').html(quote);
-            $('#author').html(author);
+            $('#quote').html("");
+            startIndexTyped = 0;
+            typeWriter();
+            //$('#author').html(author);
 
             var selectedNumbers = [];
             selectedNumbers.push(authors.indexOf(author));
-            console.log("index: "+authors.indexOf(author));
+
             while (selectedNumbers.length < 4) {
                 var randomNumber = Math.floor(Math.random() * authors.length);
                 if (!selectedNumbers.includes(randomNumber)) {
@@ -99,9 +131,19 @@
         }
 
         function nextRound() {
+            if (gameOver) return;
             updateQuote();
             updateDisplay();
 
+        }
+
+        function end() {
+            //alert("Game OVER!");
+            $('#exampleModal').modal({ backdrop: 'static', keyboard: false });
+            $("#exampleModal").modal("show");
+
+            $("#scoreInput").val(score);
+            gameOver = true;
         }
 
 
@@ -113,23 +155,53 @@
                     var answer = $(this).html();
                     
                     if (answer == author) {
-                        score++;
+                        score = score + (countdown * 20);
+                        
+                        countdown = 10;
+
+                        if (currentRound <= maxRound) {
+                            currentRound++;
+                            nextRound();
+                        }
+
                     } else {
-
-                    }
-
-                    if (currentRound <= maxRound) {
-                        currentRound++;
-                        nextRound();
+                        end();
                     }
                 });
             }
 
         });
 
-
+    </script>
+    <script>
 
     </script>
 </div>
 
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Save" method="post">
 
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Game Over</h5>
+                </div>
+                <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Display Name</label>
+
+                            <input asp-for="LeaderboardEntry.DisplayName" type="text" class="form-control" name="DisplayName" id="displayName">
+                            <input asp-for="LeaderboardEntry.Score" type="hidden" class="form-control" name="Score" id="scoreInput">
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary text-nowrap">Save to leaderboard</button>
+                    <a asp-area="" asp-controller="Home" asp-action="Leaderboard" class="btn btn-secondary btn-block ml-1">View Leaderboard</a>
+                    <a asp-action="Play" class="btn btn-secondary btn-block ml-1">Retry</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

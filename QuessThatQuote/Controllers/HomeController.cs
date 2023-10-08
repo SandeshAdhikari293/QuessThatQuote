@@ -3,28 +3,24 @@ using QuessThatQuote.Models;
 using System.Diagnostics;
 using RestSharp;
 using System.Text.Json;
+using QuessThatQuote.Data;
 
 namespace QuessThatQuote.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext)
         {
             _logger = logger;
+            _context = applicationDbContext;
         }
 
         public async Task<IActionResult> Index()
         {
-            var client = new RestClient($"https://api.breakingbadquotes.xyz/v1/quotes/3");
-            var request = new RestRequest();
-            RestResponse response = await client.ExecuteAsync(request);
-
-            List<BbQuote> bbQuote = BbQuote.FromJson(response.Content);
-
-
-            return View("Index", bbQuote);
+            return View("Index");
         }
 
         public IActionResult Privacy()
@@ -36,6 +32,12 @@ namespace QuessThatQuote.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult Leaderboard()
+        {
+
+            return View("Leaderboard", _context.LeaderboardEntry.ToList().OrderByDescending(s => s.Score));
         }
     }
 }
