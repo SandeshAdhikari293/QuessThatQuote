@@ -39,5 +39,10 @@ namespace QuessThatQuote.Controllers
 
             return View("Leaderboard", _context.LeaderboardEntry.ToList().OrderByDescending(s => s.Score));
         }
+
+        public IActionResult FilterLeaderboard(string game)
+        {
+            return View("Leaderboard", _context.LeaderboardEntry.Where(g => g.GameType.Equals(game)).ToList().OrderByDescending(s => s.Score));
+        }
     }
 }

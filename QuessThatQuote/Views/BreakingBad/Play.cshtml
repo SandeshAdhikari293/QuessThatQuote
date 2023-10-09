@@ -197,7 +197,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary text-nowrap">Save to leaderboard</button>
-                    <a asp-area="" asp-controller="Home" asp-action="Leaderboard" class="btn btn-secondary btn-block ml-1">View Leaderboard</a>
+                    <a asp-area="" asp-controller="Home" asp-action="FilterLeaderboard" asp-route-game="@Model.LeaderboardEntry.GameType" class="btn btn-secondary btn-block ml-1">View Leaderboard</a>
                     <a asp-action="Play" class="btn btn-secondary btn-block ml-1">Retry</a>
                 </div>
             </form>

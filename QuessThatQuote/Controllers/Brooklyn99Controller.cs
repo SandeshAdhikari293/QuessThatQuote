@@ -61,7 +61,7 @@ namespace QuessThatQuote.Controllers
             _context.LeaderboardEntry.Add(entry);
             _context.SaveChanges();
 
-            return View("Leaderboard", _context.LeaderboardEntry.ToList().OrderByDescending(s => s.Score));
+            return View("Leaderboard", _context.LeaderboardEntry.Where(g => g.GameType.Equals(entry.GameType)).ToList().OrderByDescending(s => s.Score));
         }
     }
 }

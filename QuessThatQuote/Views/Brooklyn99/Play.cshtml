@@ -101,19 +101,23 @@
 
         var startIndexTyped = 0;
         var speed = 50;
+        var timeout;
+
         function typeWriter() {
 
             if (startIndexTyped < quote.length) {
                 document.getElementById("quote").innerHTML += quote.charAt(startIndexTyped);
                 startIndexTyped++;
-                setTimeout(typeWriter, speed);
+                timeout = setTimeout(typeWriter, speed);
             }
         }
-
+        
 
         function updateDisplay() {
             $('#quote').html("");
             startIndexTyped = 0;
+
+            clearTimeout(timeout);
             typeWriter();
             //$('#author').html(author);
 
@@ -176,10 +180,11 @@
                         
                         countdown = 10;
 
-                        if (currentRound <= maxRound) {
+                        if (currentRound < (maxRound-1)) {
                             currentRound++;
                             nextRound();
                         }else{
+                            alert("end");
                             end();
                         }
 

@@ -1,16 +1,38 @@
-﻿@model IEnumerable<LeaderboardEntry>
+﻿@using System.Diagnostics;
+@model IEnumerable<LeaderboardEntry>
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+
+    List<GameType> list = Enum.GetValues(typeof(GameType)).Cast<GameType>().ToList();
+
+    foreach(GameType gameType in list)
+    {
+        String game = gameType.ToString().Replace("_", " ").Replace("0", "-");
+        Debug.WriteLine(game);
+    }
 }
 
 <div class="container">
     <div class="text-center">
         <h3>Leaderboard</h3>
     </div>
-
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown button
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a class="dropdown-item" asp-action="Leaderboard" asp-controller="Home" >All Games</a></li>
+            @foreach(GameType gameType in list)
+            {
+                String game = gameType.ToString().Replace("_", " ").Replace("0", "-");
+                <li><a class="dropdown-item" asp-action="FilterLeaderboard" asp-controller="Home" asp-route-game="@game">@game</a></li>
+            }
+        </ul>
+    </div>
     <table class="table">
+
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -42,4 +64,7 @@
             }
         </tbody>
     </table>
+    <script>
+
+    </script>
 </div>

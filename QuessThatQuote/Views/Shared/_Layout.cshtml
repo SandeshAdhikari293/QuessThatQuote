@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{
+    List<GameType> list = Enum.GetValues(typeof(GameType)).Cast<GameType>().ToList();
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -28,19 +31,17 @@
                                 TV Shows & Movies
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="BreakingBad" asp-action="Play">Breaking Bad</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-route-game="Breaking Bad" asp-controller="Brooklyn99" asp-action="Play">Breaking Bad [2]</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-route-game="Brooklyn Nine-Nine" asp-controller="Brooklyn99" asp-action="Play">Brooklyn Nine Nine</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-route-game="The Good Place" asp-controller="Brooklyn99" asp-action="Play">The Good Place</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-route-game="Gilmore Girls" asp-controller="Brooklyn99" asp-action="Play">Gilmore Girls</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-route-game="Suits" asp-controller="Brooklyn99" asp-action="Play">Suits</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-route-game="Stranger Things" asp-controller="Brooklyn99" asp-action="Play">Stranger Things</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-route-game="Scrubs" asp-controller="Brooklyn99" asp-action="Play">Scrubs</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-route-game="The Goldbergs" asp-controller="Brooklyn99" asp-action="Play">The Goldbergs</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-route-game="How I Met Your Mother" asp-controller="Brooklyn99" asp-action="Play">How I Met Your Mother</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-route-game="The Office" asp-controller="Brooklyn99" asp-action="Play">The Office</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="BreakingBad" asp-action="Play">Breaking Bad [Mega Game]</a></li>
 
-                                <li><a class="dropdown-item" asp-area="" asp-controller="" asp-action="">Coming Soon!</a></li>
+                                @foreach (GameType gameType in list)
+                                {
+                                    String game = gameType.ToString().Replace("_", " ").Replace("0", "-");
+                                    <li><a class="dropdown-item" asp-controller="Brooklyn99" asp-action="Play" asp-route-game="@game">@game</a></li>
+                                    //<li><a class="dropdown-item" asp-area="" asp-route-game="Breaking Bad" asp-controller="Brooklyn99" asp-action="Play">Breaking Bad [2]</a></li>
+
+                                }
+
+                                <li><a class="dropdown-item" asp-area="" asp-controller="" asp-action="">Coming Soon...</a></li>
                             </ul>
                         </li>
                     </ul>
