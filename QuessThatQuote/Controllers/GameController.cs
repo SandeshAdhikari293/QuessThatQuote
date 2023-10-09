@@ -8,11 +8,11 @@ using System.Diagnostics;
 
 namespace QuessThatQuote.Controllers
 {
-    public class Brooklyn99Controller : Controller
+    public class GameController : Controller
     {
         readonly ApplicationDbContext _context;
         //string gameType = "Brooklyn%20Nine-Nine";
-        public Brooklyn99Controller(ApplicationDbContext applicationDbContext)
+        public GameController(ApplicationDbContext applicationDbContext)
         {
             _context = applicationDbContext;
         }

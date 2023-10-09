@@ -6,7 +6,6 @@
         Brooklyn_Nine0Nine, 
         Gilmore_Girls,
         The_Good_Place,
-        Suits,
         Stranger_Things,
         Scrubs,
         The_Goldbergs,

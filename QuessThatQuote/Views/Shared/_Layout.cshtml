@@ -15,7 +15,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">QuessThatQuote</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Leaderboard">QuessThatQuote</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -31,12 +31,10 @@
                                 TV Shows & Movies
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="BreakingBad" asp-action="Play">Breaking Bad [Mega Game]</a></li>
-
                                 @foreach (GameType gameType in list)
                                 {
                                     String game = gameType.ToString().Replace("_", " ").Replace("0", "-");
-                                    <li><a class="dropdown-item" asp-controller="Brooklyn99" asp-action="Play" asp-route-game="@game">@game</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Game" asp-action="Play" asp-route-game="@game">@game</a></li>
                                     //<li><a class="dropdown-item" asp-area="" asp-route-game="Breaking Bad" asp-controller="Brooklyn99" asp-action="Play">Breaking Bad [2]</a></li>
 
                                 }

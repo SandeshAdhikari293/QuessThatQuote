@@ -17,50 +17,50 @@ body {
     margin-bottom: 60px;
 }
 
-#countdown {
-    position: relative;
-    margin: auto;
-    margin-top: 100px;
-    height: 40px;
-    width: 40px;
-    text-align: center;
-}
-
-#countdown-number {
-    color: black;
-    display: inline-block;
-    line-height: 40px;
-}
-
-svg {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 40px;
-    height: 40px;
-    transform: rotateY(-180deg) rotateZ(-90deg);
-}
-
-    svg circle {
-        stroke-dasharray: 113px;
-        stroke-dashoffset: 0px;
-        stroke-linecap: round;
-        stroke-width: 2px;
-        stroke: black;
-        fill: none;
-        animation: countdown 10s linear infinite forwards;
-    }
-
-@keyframes countdown {
-    from {
-        stroke-dashoffset: 0px;
-    }
-
-    to {
-        stroke-dashoffset: 113px;
-    }
-}
 
 .modal-footer {
     justify-content: space-between;
 }
+
+body {
+    font-family: system-ui;
+    background: #fff;
+    text-align: center;
+}
+
+.timer {
+    margin-top: 10px;
+}
+
+    .timer > svg {
+        width: 200px;
+        height: 200px;
+    }
+
+        .timer > svg > circle {
+            fill: none;
+            stroke-opacity: 0.3;
+            stroke: #0d6efd;
+            stroke-width: 10;
+            transform-origin: center center;
+            transform: rotate(-90deg);
+        }
+
+            .timer > svg > circle + circle {
+                stroke-dasharray: 1;
+                stroke-dashoffset: 1;
+                stroke-linecap: round;
+                stroke-opacity: 1;
+            }
+
+    .timer.animatable > svg > circle + circle {
+        transition: stroke-dashoffset 0.3s ease;
+    }
+
+    .timer > svg > text {
+        font-size: 2rem;
+    }
+
+        .timer > svg > text + text {
+            font-size: 1rem;
+        }

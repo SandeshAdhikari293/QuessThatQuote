@@ -47,6 +47,10 @@
             }
             @foreach (LeaderboardEntry entry in Model)
             {
+                if(count > 10)
+                {
+                    break;
+                }
                 <tr>
                     <th scope="row">@count</th>
                     <td>

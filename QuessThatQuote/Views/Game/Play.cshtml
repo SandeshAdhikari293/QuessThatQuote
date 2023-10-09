@@ -1,22 +1,27 @@
-﻿@model QuoteViewModel;
+﻿@using System.Diagnostics;
+@model QuoteViewModel;
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
     string jsonStringContent = Model.Json;
+    Debug.WriteLine(jsonStringContent);
 }
 <head>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
 
 <div class="container text-center">
-    <h2 class="mb-5">Guess That Quote! - Breaking Bad Edition</h2>
-    <div id="countdown">
-        <div id="countdown-number"></div>
+    <h2 class="mb-5">Guess That Quote! - @Model.LeaderboardEntry.GameType Edition</h2>
+    <div class="timer animatable">
         <svg>
-            <circle r="18" cx="20" cy="20"></circle>
+            <circle cx="50%" cy="50%" r="90" />
+            <circle cx="50%" cy="50%" r="90" pathLength="1" />
+            <text x="100" y="100" text-anchor="middle"><tspan id="timeLeft"></tspan></text>
+            <text x="100" y="120" text-anchor="middle">seconds</text>
         </svg>
     </div>
+
     <p id="round"></p>
     <p id="score" class="mb-5"></p>
     <h5 id="quote" class="mb-4"></h5>
@@ -44,65 +49,101 @@
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     <script type="text/javascript">
         var gameOver = false;
-        var countdownNumberEl = document.getElementById('countdown-number');
         var countdown = 10;
 
-        countdownNumberEl.textContent = countdown;
+        let timeLeft = countdown;
+        let timer = document.getElementById('timeLeft');
 
-        setInterval(function () {
-            if (gameOver) {
-                return;
-            }
-            countdown--;
-            if (countdown == 0) {
-                end();
-            }
+        function isTimeLeft() {
+            return timeLeft > -1;
+        }
 
-            countdownNumberEl.textContent = countdown;
-        }, 1000);
+        function runTimer(timerElement) {
+            const timerCircle = timerElement.querySelector('svg > circle + circle');
+            timerElement.classList.add('animatable');
+            timerCircle.style.strokeDashoffset = 1;
+
+            let countdownTimer = setInterval(function () {
+                if (isTimeLeft()) {
+                    const timeRemaining = timeLeft--;
+                    const normalizedTime = (countdown - timeRemaining) / countdown;
+                    // for clockwise animation
+                    // const normalizedTime = (timeRemaining - 60) / 60;
+                    timerCircle.style.strokeDashoffset = normalizedTime;
+                    timer.innerHTML = timeRemaining;
+                } else {
+                    clearInterval(countdownTimer);
+                    timerElement.classList.remove('animatable');
+                    end();
+                }
+            }, 1000);
+        }
+
+        function cancelTimer(timerElement){
+            clearInterval(countdownTimer);
+        }
 
         var score = 0;
-        var maxRound = 100;
+        var maxRound = 10;
         var currentRound = 0;
         var jsonObject = @Html.Raw(jsonStringContent);
 
+
         var authors = [];
         for (let i = 0; i < maxRound; i++) {
-            var string = jsonObject[i].author;
+            var string = jsonObject[i].character;
             if (!authors.includes(string)) {
+                
+                
                 authors.push(string);
             }
         }
+
         console.log(authors);
 
-        var quote = jsonObject[currentRound].quote;
-        var author = jsonObject[currentRound].author;
+
+        var quote = jsonObject[currentRound].text;
+
+        if (quote.includes(":")) {
+            quote = quote.split(":")[1];
+        }
+        var author = jsonObject[currentRound].character;
 
 
         function updateQuote() {
-            quote = jsonObject[currentRound].quote;
-            author = jsonObject[currentRound].author;
+            quote = jsonObject[currentRound].text;
+
+            if (quote.includes(":")) {
+                quote = quote.split(":")[1];
+            }
+            author = jsonObject[currentRound].character;
         }
 
         var startIndexTyped = 0;
         var speed = 50;
+        var timeout;
+
         function typeWriter() {
 
             if (startIndexTyped < quote.length) {
                 document.getElementById("quote").innerHTML += quote.charAt(startIndexTyped);
                 startIndexTyped++;
-                setTimeout(typeWriter, speed);
+                timeout = setTimeout(typeWriter, speed);
             }
         }
+        
 
         function updateDisplay() {
             $('#quote').html("");
             startIndexTyped = 0;
+
+            clearTimeout(timeout);
             typeWriter();
             //$('#author').html(author);
 
             var selectedNumbers = [];
             selectedNumbers.push(authors.indexOf(author));
+
 
             while (selectedNumbers.length < 4) {
                 var randomNumber = Math.floor(Math.random() * authors.length);
@@ -148,6 +189,7 @@
 
 
         $(document).ready(function () {
+            runTimer(document.querySelector('.timer'));
             updateDisplay();
 
             for (let i = 1; i <= 4; i++) {
@@ -155,13 +197,16 @@
                     var answer = $(this).html();
                     
                     if (answer == author) {
-                        score = score + (countdown * 20);
+                        score = score + (timeLeft * 20);
                         
-                        countdown = 10;
+                        timeLeft = 10;
 
-                        if (currentRound <= maxRound) {
+                        if (currentRound < (maxRound-1)) {
                             currentRound++;
                             nextRound();
+                        }else{
+                            alert("end");
+                            end();
                         }
 
                     } else {
@@ -192,13 +237,15 @@
 
                             <input asp-for="LeaderboardEntry.DisplayName" type="text" class="form-control" name="DisplayName" id="displayName">
                             <input asp-for="LeaderboardEntry.Score" type="hidden" class="form-control" name="Score" id="scoreInput">
+                            <input asp-for="LeaderboardEntry.GameType" type="hidden" class="form-control" name="GameType" id="gameType">
+
                         </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary text-nowrap">Save to leaderboard</button>
-                    <a asp-area="" asp-controller="Home" asp-action="FilterLeaderboard" asp-route-game="@Model.LeaderboardEntry.GameType" class="btn btn-secondary btn-block ml-1">View Leaderboard</a>
-                    <a asp-action="Play" class="btn btn-secondary btn-block ml-1">Retry</a>
+                    <a asp-area="" asp-controller="Home" asp-action="Leaderboard" class="btn btn-secondary btn-block ml-1">View Leaderboard</a>
+                    <a asp-action="Play" asp-route-game="@Model.LeaderboardEntry.GameType" class="btn btn-secondary btn-block ml-1">Retry</a>
                 </div>
             </form>
 
