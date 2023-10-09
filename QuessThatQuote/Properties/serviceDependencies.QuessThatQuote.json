@@ -1,11 +1,12 @@
 {
   "dependencies": {
     "mssql1": {
-      "serviceConnectorResourceId": "",
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/QuessThatQuote/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsApplicationDbContext_6B0105BE4B",
       "secretStore": "AzureAppSettings",
-      "resourceId": null,
-      "type": "mssql.onprem",
-      "connectionId": "ConnectionStrings:ApplicationDbContext"
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/quessthatquotedbserver/databases/QuessThatQuote_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:ApplicationDbContext",
+      "dynamicId": null
     }
   }
 }
