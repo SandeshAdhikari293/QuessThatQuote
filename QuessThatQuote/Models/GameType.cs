@@ -10,6 +10,9 @@
         Scrubs,
         The_Goldbergs,
         How_I_Met_Your_Mother,
-        The_Office
+        The_Office,
+        New_Girl,
+        Friends,
+        Lucifer
     }
 }
